@@ -1,14 +1,16 @@
-import React from "react";
+// src/components/PhoneScreen.tsx
+import React from 'react';
 
-function PhoneScreen({ children }: { children: React.ReactNode }) {
+interface PhoneScreenProps {
+  children: React.ReactNode;
+}
 
+const PhoneScreen: React.FC<PhoneScreenProps> = ({ children }) => {
   return (
-
-    <div className="relative w-[360px] h-[720px] rounded-[24px] border border-solid overflow-hidden">
-      {" "}
-      {children}{" "}
+    <div className="w-[393px] h-[853px] bg-white rounded-2xl shadow-lg overflow-hidden">
+      {children}
     </div>
   );
-}
+};
 
 export default PhoneScreen;
