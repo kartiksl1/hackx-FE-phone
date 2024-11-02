@@ -1,19 +1,24 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import Image from "next/image";
 import Top from "@/public/Top app bar.svg";
 import Logo from "@/public/signaturepage1.svg";
 
+// Define the PrivacyPreferenceProps interface
 interface PrivacyPreferenceProps {
   backgroundImage?: any;
   children: React.ReactNode;
+  onSelect: () => void;
 }
 
+// PrivacyPreference component
 const PrivacyPreference: React.FC<PrivacyPreferenceProps> = ({
   backgroundImage,
   children,
+  onSelect,
 }) => {
   return (
-    <div className="relative max-w-md">
+    <div className="relative max-w-md" onClick={onSelect}>
       <div
         className="p-4 rounded-2xl flex items-start gap-3.5 bg-white/90"
         style={{
@@ -34,10 +39,42 @@ const PrivacyPreference: React.FC<PrivacyPreferenceProps> = ({
   );
 };
 
+// Main Page component
 function Page() {
+  const [consentLevel, setConsentLevel] = useState<string | null>(null);
+
+  // Function to handle API call
+  const handleConsentSubmit = async (level: string) => {
+    setConsentLevel(level);
+
+    const payload = {
+      userId: "Sanje", // Replace with dynamic user ID if needed
+      consentLevel: level,
+    };
+
+    try {
+      const response = await fetch("http://localhost:3005/api/consent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (data.status === "success") {
+        console.log("Consent created successfully:", data.message);
+      } else {
+        console.error("Error creating consent:", data.message);
+      }
+    } catch (error) {
+      console.error("Failed to send consent:", error);
+    }
+  };
+
   return (
     <div>
-      <div className=" m-4 ">
+      <div className="m-4">
         <div className="text-[#171d1e] text-[28px] font-semibold leading-9 mb-4">
           Select your privacy preference
         </div>
@@ -58,7 +95,10 @@ function Page() {
       </div>
       <div className="flex flex-col gap-8 items-center justify-center py-8">
         <div className="text-black text-xl font-normal leading-tight tracking-tight">
-          <PrivacyPreference backgroundImage={"@/public/fort"}>
+          <PrivacyPreference
+            backgroundImage={"@/public/fort"}
+            onSelect={() => handleConsentSubmit("low")}
+          >
             <div className="text-[#002203] text-sm font-bold leading-none">
               Fort Knox
             </div>
@@ -67,8 +107,11 @@ function Page() {
               and a vigilant knight on duty.
             </div>
           </PrivacyPreference>
-          <PrivacyPreference backgroundImage={"@/public/fort"}>
-            <div className="text-[#002203] text-sm font-bold  leading-[14px]">
+          <PrivacyPreference
+            backgroundImage={"@/public/fort"}
+            onSelect={() => handleConsentSubmit("medium")}
+          >
+            <div className="text-[#002203] text-sm font-bold leading-[14px]">
               Secret Garden
             </div>
             <div className="w-[262px] text-black text-sm font-normal leading-[16.80px]">
@@ -76,8 +119,11 @@ function Page() {
               garden with a neat little fence around it.
             </div>
           </PrivacyPreference>
-          <PrivacyPreference backgroundImage={""}>
-            <div className="text-[#002203] text-sm font-bold  leading-[14px]">
+          <PrivacyPreference
+            backgroundImage={""}
+            onSelect={() => handleConsentSubmit("high")}
+          >
+            <div className="text-[#002203] text-sm font-bold leading-[14px]">
               Wide Open Spaces
             </div>
             <div className="w-[262px] text-black text-sm font-normal leading-[16.80px]">
